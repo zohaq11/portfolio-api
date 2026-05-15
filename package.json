@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "openai": "^4.56.0"
+    "openai": "^4.56.0",
+    "pdf-parse": "^2.4.5"
   }
 }
