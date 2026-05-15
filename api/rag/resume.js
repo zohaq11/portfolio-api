@@ -1,20 +1,23 @@
 import pdf from "pdf-parse";
+import fs from "fs";
+import path from "path";
 
 let cached = null;
 
 export async function loadResume() {
   if (cached) return cached;
 
-  const url =
-    process.env.NODE_ENV === "development"
-      ? "http://localhost:3000/Zoha_Qamar_Resume.pdf"
-      : "https://zoha-portfolio-api.vercel.app/Zoha_Qamar_Resume.pdf";
+  const filePath = path.join(
+    process.cwd(),
+    "public",
+    "Zoha_Qamar_Resume.pdf"
+  );
 
-  const res = await fetch(url);
-  const buffer = await res.arrayBuffer();
+  const buffer = fs.readFileSync(filePath);
 
-  const data = await pdf(Buffer.from(buffer));
+  const data = await pdf(buffer);
 
   cached = data.text;
+
   return cached;
 }
