@@ -8,7 +8,7 @@ export async function loadResume() {
   const url =
     process.env.NODE_ENV === "development"
       ? "http://localhost:3000/Zoha_Qamar_Resume.pdf"
-      : "https://portfolio-api.vercel.app/Zoha_Qamar_Resume.pdf";
+      : "https://zoha-portfolio-api.vercel.app/Zoha_Qamar_Resume.pdf";
 
   const res = await fetch(url);
   const buffer = await res.arrayBuffer();
