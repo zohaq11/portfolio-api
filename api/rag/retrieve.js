@@ -1,17 +1,18 @@
 import { loadResume } from "./resume.js";
 import { embed } from "./embed.js";
+import { personalFacts } from "./personal.js";
 
 let chunks = null;
 let chunkEmbeddings = null;
 
 /**
- * Split resume into STRUCTURED chunks (best approach)
+ * Split resume into chunks based on existing Resume sections
  */
 function chunkResume(text) {
   const sections = {
+    education: [],
     experience: [],
     projects: [],
-    education: [],
     skills: [],
     other: [],
   };
@@ -22,10 +23,10 @@ function chunkResume(text) {
 
   for (const line of lines) {
     const l = line.toLowerCase();
-
-    if (l.includes("experience")) current = "experience";
+    
+    if (l.includes("education")) current = "education";
+    else if (l.includes("experience")) current = "experience";
     else if (l.includes("project")) current = "projects";
-    else if (l.includes("education")) current = "education";
     else if (l.includes("skills")) current = "skills";
 
     if (line.trim().length > 20) {
@@ -52,8 +53,15 @@ function dot(a, b) {
 async function init() {
   if (chunks) return;
 
-  const text = await loadResume();
-  chunks = chunkResume(text);
+  const resumeText = await loadResume();
+  const resumeChunks = chunkResume(resumeText);
+
+  const personalChunks = personalFacts.map(p => ({
+    section: `personal_${p.section}`,
+    text: p.text,
+  }));
+
+  chunks = [...resumeChunks, ...personalChunks];
 
   chunkEmbeddings = [];
 

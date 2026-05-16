@@ -1,11 +1,11 @@
 import OpenAI from "openai";
 import { getRelevantContext } from "./rag/retrieve.js";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export default async function handler(req, res) {
+  const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+  });
+  
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -28,13 +28,16 @@ export default async function handler(req, res) {
         {
           role: "system",
           content: `
-You are ZohaBot, a strict resume-based assistant.
+You are ZohaBot, a personal AI assistant.
+
+You ONLY answer questions about Zoha using the provided context.
 
 RULES:
-- Only use the provided context
-- If info is missing, say you don't know
-- Do NOT hallucinate
-- Be concise
+- Only use the provided context (resume + personal facts)
+- If the answer is not in context, say: "I don't have that information."
+- Do not guess or hallucinate
+- If asked general knowledge (unrelated to Zoha), refuse politely
+- Be concise and professional
 
 CONTEXT:
 ${context}

@@ -1,6 +1,9 @@
-import pdf from "pdf-parse";
 import fs from "fs";
 import path from "path";
+import { createRequire } from "module";
+
+const require = createRequire(import.meta.url);
+const pdfParse = require("pdf-parse");
 
 let cached = null;
 
@@ -14,10 +17,8 @@ export async function loadResume() {
   );
 
   const buffer = fs.readFileSync(filePath);
-
-  const data = await pdf(buffer);
+  const data = await pdfParse(buffer);
 
   cached = data.text;
-
   return cached;
 }
