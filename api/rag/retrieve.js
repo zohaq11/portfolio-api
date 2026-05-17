@@ -47,6 +47,15 @@ function dot(a, b) {
   return a.reduce((sum, v, i) => sum + v * b[i], 0);
 }
 
+function cosineSimilarity(a, b) {
+  const dot = a.reduce((sum, v, i) => sum + v * b[i], 0);
+
+  const normA = Math.sqrt(a.reduce((sum, v) => sum + v * v, 0));
+  const normB = Math.sqrt(b.reduce((sum, v) => sum + v * v, 0));
+
+  return dot / (normA * normB);
+}
+
 /**
  * Initialize once per cold start
  */
@@ -80,14 +89,15 @@ export async function getRelevantContext(query) {
   const queryEmbedding = await embed(query);
 
   const scored = chunks.map((c, i) => ({
-    score: dot(queryEmbedding, chunkEmbeddings[i]),
+    score: cosineSimilarity(queryEmbedding, chunkEmbeddings[i]),
     chunk: c,
   }));
 
   scored.sort((a, b) => b.score - a.score);
 
   return scored
-    .slice(0, 3)
-    .map(s => `[${s.chunk.section.toUpperCase()}]\n${s.chunk.text}`)
-    .join("\n\n");
+  .filter(s => s.score > 0.3)
+  .slice(0, 3)
+  .map(s => `[${s.chunk.section.toUpperCase()}]\n${s.chunk.text}`)
+  .join("\n\n");
 }
