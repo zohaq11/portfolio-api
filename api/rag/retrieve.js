@@ -1,6 +1,5 @@
-import { loadResume } from "./resume.js";
 import { embed } from "./embed.js";
-import { personalFacts } from "./personal.js";
+import fs from "fs";
 
 let chunks = null;
 let chunkEmbeddings = null;
@@ -8,7 +7,7 @@ let chunkEmbeddings = null;
 /**
  * Split resume into chunks based on existing Resume sections
  */
-function chunkResume(text) {
+export function chunkResume(text) {
   const sections = {
     education: [],
     experience: [],
@@ -62,22 +61,19 @@ function cosineSimilarity(a, b) {
 async function init() {
   if (chunks) return;
 
-  const resumeText = await loadResume();
-  const resumeChunks = chunkResume(resumeText);
+  const raw = fs.readFileSync(
+    "./api/rag/embeddings.json",
+    "utf-8"
+  );
 
-  const personalChunks = personalFacts.map(p => ({
-    section: `personal_${p.section}`,
-    text: p.text,
+  const data = JSON.parse(raw);
+
+  chunks = data.map(d => ({
+    section: d.section,
+    text: d.text,
   }));
 
-  chunks = [...resumeChunks, ...personalChunks];
-
-  chunkEmbeddings = [];
-
-  for (const c of chunks) {
-    const emb = await embed(c.text);
-    chunkEmbeddings.push(emb);
-  }
+  chunkEmbeddings = data.map(d => d.embedding);
 }
 
 /**

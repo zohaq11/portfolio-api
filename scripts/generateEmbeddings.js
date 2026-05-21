@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
 import fs from "fs";
 import { loadResume } from "../api/rag/resume.js";
 import { embed } from "../api/rag/embed.js";
