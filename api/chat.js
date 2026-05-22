@@ -18,11 +18,12 @@ export default async function handler(req, res) {
   try {
     const { messages, model, max_tokens } = req.body;
 
-    const userMessage = messages
-      .filter(m => m.role === "user")
-      .slice(-1)[0].content;
+    const recentMessages = messages
+    .slice(-6)
+    .map(m => `${m.role}: ${m.content}`)
+    .join("\n");
 
-    const context = await getRelevantContext(userMessage);
+  const context = await getRelevantContext(recentMessages);
 
     const response = await openai.chat.completions.create({
       model,
@@ -30,16 +31,19 @@ export default async function handler(req, res) {
         {
           role: "system",
           content: `
-You are ZohaBot, a personal AI assistant.
+You are ZohaBot, an AI assistant on Zoha's personal portfolio website.
 
-You ONLY answer questions about Zoha using the provided context.
+Your ONLY purpose is to answer questions related to Zoha using:
+1. the retrieved context
+2. the ongoing conversation
 
 RULES:
-- Only use the provided context (resume + personal facts)
-- If the answer is not in context, say: "I don't have that information."
-- Do not guess or hallucinate
-- If asked general knowledge (unrelated to Zoha), refuse politely
-- Be concise and professional
+- Only answer questions related to Zoha
+- If the information is not available in either the conversation or retrieved context, say:
+"I don't have that information."
+- Do not invent facts or hallucinate.
+- If a user asks for anything unrelated to Zoha, politely decline.
+- Be concise and conversational
 
 CONTEXT:
 ${context}
