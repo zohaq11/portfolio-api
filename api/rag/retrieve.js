@@ -1,5 +1,7 @@
 import { embed } from "./embed.js";
 import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 let chunks = null;
 let chunkEmbeddings = null;
@@ -61,10 +63,12 @@ function cosineSimilarity(a, b) {
 async function init() {
   if (chunks) return;
 
-  const raw = fs.readFileSync(
-    "./api/rag/embeddings.json",
-    "utf-8"
-  );
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+
+  const embeddingsPath = path.join(__dirname, "embeddings.json");
+
+  const raw = fs.readFileSync(embeddingsPath, "utf-8");
 
   const data = JSON.parse(raw);
 
