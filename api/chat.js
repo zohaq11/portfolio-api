@@ -29,10 +29,10 @@ function rateLimit(ip) {
 export default async function handler(req, res) {
   
   const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:3000",
-  "https://zohaq11.github.io"
-];
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://zohaq11.github.io"
+  ];
 
   const origin = req.headers.origin;
 
@@ -41,10 +41,10 @@ export default async function handler(req, res) {
   }
 
   if (origin && !allowedOrigins.includes(origin)) {
-  return res.status(403).json({
-    error: "Origin not allowed"
-  });
-}
+    return res.status(403).json({
+      error: "Origin not allowed"
+    });
+  }
 
   res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -81,7 +81,7 @@ export default async function handler(req, res) {
           content: `
 You are ZohaBot, an AI assistant on Zoha's personal portfolio website.
 
-Your ONLY purpose is to answer questions related to Zoha using:
+Your ONLY purpose is to answer questions related to Zoha in third person using:
 1. the retrieved context
 2. the ongoing conversation
 

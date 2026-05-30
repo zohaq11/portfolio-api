@@ -96,7 +96,7 @@ export async function getRelevantContext(query) {
   scored.sort((a, b) => b.score - a.score);
 
   return scored
-  .filter(s => s.score > 0.3)
+  .filter(s => s.score > 0.2)
   .slice(0, 3)
   .map(s => `[${s.chunk.section.toUpperCase()}]\n${s.chunk.text}`)
   .join("\n\n");

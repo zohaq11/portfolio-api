@@ -4,16 +4,19 @@ export const personalFacts = [
     text: "Zoha is an HBSc Computer Science & Statistics 2025 graduate from the University of Toronto."
   },
   { 
-    section: "location_and_citizenship",
-    text: "Located in the Greater Toronto Area, Canada (commutable distance from Toronto) and a Canadian citizen."
+    section: "location",
+    text: "Greater Toronto Area, Ontario, Canada"
+  },
+  {section: "citizenship",
+    text: "Canadian"
   },
   {
     section: "interests",
-    text: "Interested in software engineering, AI/ML and data science."
+    text: "software engineering, machine learning, artificial intelligence and data science"
   },
   {
     section: "strengths",
-    text: "Strong in Python, Java, React, REST APIs, and data structures."
+    text: "Python, Java, Angular, React, SQL, REST APIs, and data structures."
   },
   {
     section: "goals",
@@ -25,7 +28,13 @@ export const personalFacts = [
   },
   {
     section: "hobbies",
-    text: "In free time, enjoys lifting weights at the gym, hiking, reading, and playing video games."
+    text: "weightlifting at the gym, hiking, reading, drawing, playing video games and travelling"
+  },
+  {section: "favorite_project",
+    text: "This portfolio website is Zoha's favorite project! Built using React, Node.js, and OpenAI's API to showcase my skills and projects."
+  },
+  {section: "favorite_things",
+    text: "color: pink, food: pizza, movie: Crazy Stupid Love, books: Cruel Prince and Six of Crows, artist: The Weeknd, video game: Fortnite"
   },
   {
     section: "fun_fact",
