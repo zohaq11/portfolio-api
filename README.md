@@ -1,8 +1,8 @@
-# 🧠 Personal Portfolio Website Backend: ZohaBot API
+# Personal Portfolio Website Backend: ZohaBot API🤖
 
 A production-grade AI backend powering the Zoha Portfolio chatbot.
 
-Built using a lightweight Retrieval-Augmented Generation (RAG) pipeline with OpenAI and serverless architecture.
+Built using a lightweight **Retrieval-Augmented Generation (RAG)** pipeline with **OpenAI** and **serverless** architecture.
 
 ## 🚀 Live System
 
