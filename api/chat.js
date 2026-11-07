@@ -2,9 +2,7 @@ import "dotenv/config";
 import OpenAI from "openai";
 import { getRelevantContext } from "./rag/retrieve.js";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-  });
+const openai = new OpenAI({apiKey: process.env.OPENAI_API_KEY,});
 
 const rateLimitMap = new Map();
 
@@ -53,28 +51,52 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  const ip =
-  req.headers["x-forwarded-for"]?.split(",")[0] ||
-  "unknown";
+  const ip = req.headers["x-forwarded-for"]?.split(",")[0] || "unknown";
 
   if (!rateLimit(ip)) {
-    return res.status(429).json({
-      error: "Too many requests. Please slow down."
-    });
+    return res.status(429).json({error: "Too many requests. Please slow down."});
   }
 
   try {
-    const { messages, model, max_tokens } = req.body;
+    const { messages } = req.body;
 
-    const recentMessages = messages
-    .slice(-6)
-    .map(m => `${m.role}: ${m.content}`)
-    .join("\n");
+    if (
+      !Array.isArray(messages) ||
+      messages.length === 0 ||
+      messages.length > 50
+    ) {
+      return res.status(400).json({
+        error: "Invalid conversation history."
+      });
+    }
 
-  const context = await getRelevantContext(recentMessages);
+    const validMessages = messages.every(
+      message =>
+        message &&
+        ["user", "assistant"].includes(message.role) &&
+        typeof message.content === "string" &&
+        message.content.trim().length > 0
+    );
+
+    if (!validMessages) {
+      return res.status(400).json({
+        error: "Invalid message format."
+      });
+    }
+
+    // Keep the most recent 12 messages for the model
+    const recentMessages = messages.slice(-12);
+
+    // Use recent conversation for RAG retrieval
+    const retrievalQuery = recentMessages
+      .slice(-6)
+      .map(message => `${message.role}: ${message.content}`)
+      .join("\n");
+
+  const context = await getRelevantContext(retrievalQuery);
 
     const response = await openai.chat.completions.create({
-      model,
+      model: "gpt-6-astra",
       messages: [
         {
           role: "system",
@@ -97,14 +119,14 @@ CONTEXT:
 ${context}
           `.trim(),
         },
-        ...messages,
+        ...recentMessages,
       ],
-      max_tokens,
+      max_completion_tokens: 500,
     });
 
     res.status(200).json(response);
   } catch (err) {
-    console.error(err);
+    console.error("ZohaBot API error:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 }
